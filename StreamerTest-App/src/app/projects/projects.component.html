@@ -1,0 +1,85 @@
+<div action="">
+  <div class="form-group mb-2">
+    <input type="text" 
+    class="form-control-mr-2" 
+    placeholder="buscar"
+    [(ngModel)]="searchFilter">
+  </div>
+</div>
+<h4>Filtro: {{searchFilter}}</h4>
+<table class="table table-striped">
+  <thead class="thead-light">
+    <tr>
+      <th>
+        <button class="btn btn-outline-primary"
+        (click)="showImages()">
+        <i class="{{imageShow ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
+      </button>
+    </th>
+    <th>#</th> 
+    <th>Name</th>
+    <th>Why</th>
+    <th>What</th>
+    <th>WhatWillWeDo</th>
+    <th>Project Status</th>
+    <th>Course Id</th>
+    <th></th>
+  </tr>
+</thead>
+<tbody *ngIf="projects && projects.length">
+  <tr *ngFor="let project of filteredProjects">
+    <td>
+      <img *ngIf="imageShow" 
+      src="http://localhost:5000/img/{{project.image}}"
+      [style.width.px] ="imageLarg"
+      [style.margin.px]="imageMarg">
+    </td>
+    <td>{{project.id}}</td>
+    <td>{{project.name}}</td>
+    <td>
+      <div *ngIf="!project.why.length">
+        No information inputed !
+      </div>
+      <div *ngIf="project.why.length">
+        {{project.why}}
+      </div>
+    </td>
+    <td>{{project.whatWillWeDo}}</td>
+    <td>{{project.what}}</td>
+    <td>{{project.projectStatus}}</td>
+    <td>{{project.courseId}}</td>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-success" 
+      tooltip="Edit" (click)="openModal(modalTemplate)">
+      <i class="fa fa-edit"></i>
+    </button>
+    <button class="btn btn-sm btn-danger" 
+    tooltip="Delete" (click)="openModal(modalTemplate)">
+    <i class="fa fa-eraser"></i>
+  </button>
+</div>
+</tr>
+</tbody>
+<tfoot>
+  <tr *ngIf="!projects.length">
+    <td colspan="7" class="text-center">
+      <h4>
+        No projects found !
+      </h4>
+    </td>
+  </tr>
+</tfoot>
+</table>
+
+<ng-template #modalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" 
+    aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  This is a modal.
+</div>
+</ng-template>
