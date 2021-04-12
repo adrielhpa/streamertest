@@ -1,12 +1,29 @@
-<div action="">
-  <div class="form-group mb-2">
-    <input type="text" 
-    class="form-control-mr-2" 
-    placeholder="buscar"
-    [(ngModel)]="searchFilter">
+<div class="d-flex">
+  
+  
+  <div class="form-inline mr-auto">
+    <div class="form-group mb-2">
+      <label class="mr-2">Project Id:</label> <input type="number" 
+      class="form-control-mr-2" 
+      placeholder="search"
+      [(ngModel)]="searchFilterId"> &nbsp;
+    </div>
+    <div class="form-group mb-2">
+      <label class="mr-2">Course Id:</label> <input type="number"
+      class="form-control-mr-2" 
+      placeholder="search"
+      [(ngModel)]="searchFilterCourseId">
+    </div>
   </div>
+  <div>
+    <button class="btn btn-outline-primary" (click)="newProject(modalTemplate)">
+      <i class="fa fa-plus-circle"></i> &nbsp;
+      New Project
+    </button>
+  </div>
+  
 </div>
-<h4>Filtro: {{searchFilter}}</h4>
+<h4>Filter: {{searchFilterId}}</h4>
 <table class="table table-striped">
   <thead class="thead-light">
     <tr>
@@ -71,15 +88,121 @@
 </tfoot>
 </table>
 
-<ng-template #modalTemplate>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close pull-right" 
-    aria-label="Close" (click)="modalRef.hide()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+<div bsModal #modalTemplate="bs-modal" class="modal fade" tabindex="-1"
+role="dialog" aria-labelledby="dialog-sizes-name1">
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 id="dialog-sizes-name1" class="modal-title pull-left">Create new project</h4>
+      <button type="button" class="close pull-right" (click)="modalTemplate.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="registerForm">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>
+              <h6>Name</h6>
+            </label>
+            <input type="text" class="form-control"
+            [ngClass]="{'is-invalid': registerForm.get('name').errors && registerForm.get('name').touched}"
+            formControlName="name" placeholder="Type the name of project">
+            <div class="invalid-feedback">
+              Name must to be typed !
+            </div>
+          </div>
+        </div>  
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>
+              <h6>Why</h6>
+            </label>
+            <input type="text" class="form-control" 
+            formControlName="why" placeholder="Type why to do this project">
+            <div class="text-danger">
+              *Optional
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label>
+              <h6>What</h6>
+            </label>
+            <input type="text" class="form-control" 
+            formControlName="what" placeholder="Type what is this project">
+            <div class="text-danger">
+              *Optional
+            </div>
+          </div>
+        </div>  
+        <div class="form-row">
+          <div class="form-group col-md-8">
+            <label>
+              <h6>What Will We Do</h6>
+            </label>
+            <input type="text" class="form-control" 
+            formControlName="whatWillWeDo" placeholder="Type what we will do in this project">
+            <div class="text-danger">
+              *Optional
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label>
+              <h6>Project Status</h6>
+            </label>
+            <input type="text" class="form-control" 
+            formControlName="projectStatus" placeholder="project status">
+            <div class="text-danger">
+              *Optional
+            </div>
+          </div>
+          <div class="form-group col-md-9">
+            <label>
+              <h6>Image</h6>
+            </label>
+            <input type="text" class="form-control" 
+            formControlName="image" placeholder="Image URL">
+            <div class="text-danger">
+              *Optional
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label>
+              <h6>Course Id</h6>
+            </label>
+            <input type="text" class="form-control" 
+            [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('courseId').touched}"
+            formControlName="courseId" placeholder="Id"> 
+            <div class="invalid-feedback">
+              Course Id must to be typed !
+            </div>
+          </div>
+          <!-- <li class="nav-item dropdown" dropdown>
+            <a dropdownToggle class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Course
+          </a>
+          <div *dropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="#">
+              <tbody>
+                <td>
+                  {{project.courseId}}
+                </td>
+              </tbody>
+            </a>
+            <div role="separator" class="divider"></div>
+          </div> -->
+        </div>  
+      </form>
+    </div>
+    <div class="modal-footer d-flex">
+      <button class="btn btn-secondary" (click)="modalTemplate.hide()">
+        Close
+      </button>
+      <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid" (click)="saveChanges(modalTemplate)">
+        Save Changes
+      </button>
+    </div>
+  </div>
 </div>
-<div class="modal-body">
-  This is a modal.
 </div>
-</ng-template>

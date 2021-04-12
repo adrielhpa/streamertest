@@ -5,7 +5,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ProjectService } from '../app/_services/Project.service';
@@ -22,13 +22,14 @@ import { ProjectsComponent } from './projects/projects.component';
    ],
   imports: [
     BrowserModule,
+    BsDropdownModule.forRoot(),
+    TooltipModule.forRoot(),
+    ModalModule.forRoot(),
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    BsDropdownModule.forRoot(),
-    TooltipModule.forRoot(),
-    ModalModule.forRoot()
+    ReactiveFormsModule
   ],
   providers: [
     ProjectService

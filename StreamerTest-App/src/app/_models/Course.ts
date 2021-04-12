@@ -2,7 +2,7 @@ import { Project } from "./Project";
 
 export interface Course {
 
-    id: number; 
+    id: number;
     name: string;
     project: Project[];
 }

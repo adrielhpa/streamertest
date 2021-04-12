@@ -51,7 +51,7 @@ namespace SS_API.Controllers
         [HttpPost]
         public int Create(Project model)
         {
-            var created =_projectService.Create(model);
+            _projectService.Create(model);
             return model.Id;
         }
     }
