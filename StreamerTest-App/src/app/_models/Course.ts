@@ -1,6 +1,6 @@
 import { Project } from "./Project";
 
-export interface Course {
+export class Course {
 
     id: number;
     name: string;

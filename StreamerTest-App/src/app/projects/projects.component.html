@@ -1,23 +1,30 @@
-<form [formGroup]="projectSearch">
   <div class="d-flex">
     <div class="form-inline mr-auto">
       <div class="form-group mb-2">
-        <label class="mr-2">Project Id:</label> 
-
-        <input type="number" 
-          class="form-control-mr-2" 
-          placeholder="search"
-          formControlName="id">
-
-        <button class="btn btn-outline-primary" (click)="getProjectById(_searchFilterById)">
+        <label class="mr-2">Project Id:</label>
+        <li>
+          <a routerLink="/projects"></a>
+        </li>
+        <input type="number"
+        class="form-control-mr-2"
+        placeholder="search by project">
+        <!-- [(ngModel)]='projectSearchId'
+        formControlName="id"> -->
+        <button class="btn btn-outline-primary" (click)="getProjectById(_searchFilterById)"  >
           Search
         </button>
+
         &nbsp;
       </div>
       <div class="form-group mb-2">
-        <label class="mr-2">Course Id:</label> <input type="number"
-        class="form-control-mr-2" 
-        placeholder="search">
+        <label class="mr-2">Course Id:</label>
+
+        <input type="number"
+        class="form-control-mr-2"
+        placeholder="search by course id">
+        <!-- [ngClass]="projectSearch.get('courseId')"
+        formControlName="courseId"> -->
+
         <button class="btn btn-outline-primary" (click)="getProjectByCourseId(_searchFilterByCourseId)">
           Search
         </button>
@@ -29,9 +36,8 @@
         New Project
       </button>
     </div>
-    
   </div>
-  
+
   <table class="table table-striped">
     <thead class="thead-light">
       <tr>
@@ -41,7 +47,7 @@
           <i class="{{imageShow ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
         </button>
       </th>
-      <th>#</th> 
+      <th>#</th>
       <th>Name</th>
       <th>Why</th>
       <th>What</th>
@@ -51,10 +57,10 @@
       <th></th>
     </tr>
   </thead>
-  <tbody *ngIf="projects && projects.length">
+  <tbody *ngIf="_searchFilterById && _searchFilterById.valueOf">
     <tr *ngFor="let project of filteredProjects">
       <td>
-        <img *ngIf="imageShow" 
+        <img *ngIf="imageShow"
         src="http://localhost:5000/img/{{project.image}}"
         [style.width.px] ="imageLarg"
         [style.margin.px]="imageMarg">
@@ -74,11 +80,11 @@
       <td>{{project.projectStatus}}</td>
       <td>{{project.courseId}}</td>
       <div class="btn-group">
-        <button class="btn btn-sm btn-success" 
+        <button class="btn btn-sm btn-success"
         tooltip="Edit" (click)="openModal(modalTemplate)">
         <i class="fa fa-edit"></i>
       </button>
-      <button class="btn btn-sm btn-danger" 
+      <button class="btn btn-sm btn-danger"
       tooltip="Delete" (click)="openModal(modalTemplate)">
       <i class="fa fa-eraser"></i>
     </button>
@@ -95,7 +101,7 @@
   </tr>
 </tfoot>
 </table>
-</form>
+
 
 <div bsModal #modalTemplate="bs-modal" class="modal fade" tabindex="-1"
 role="dialog" aria-labelledby="dialog-sizes-name1">
@@ -121,13 +127,13 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
               Name must to be typed !
             </div>
           </div>
-        </div>  
+        </div>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label>
               <h6>Why</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             formControlName="why" placeholder="Type why to do this project">
             <div class="text-danger">
               *Optional
@@ -137,19 +143,19 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             <label>
               <h6>What</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             formControlName="what" placeholder="Type what is this project">
             <div class="text-danger">
               *Optional
             </div>
           </div>
-        </div>  
+        </div>
         <div class="form-row">
           <div class="form-group col-md-8">
             <label>
               <h6>What Will We Do</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             formControlName="whatWillWeDo" placeholder="Type what we will do in this project">
             <div class="text-danger">
               *Optional
@@ -159,7 +165,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             <label>
               <h6>Project Status</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             formControlName="projectStatus" placeholder="project status">
             <div class="text-danger">
               *Optional
@@ -169,7 +175,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             <label>
               <h6>Image</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             formControlName="image" placeholder="Image URL">
             <div class="text-danger">
               *Optional
@@ -179,9 +185,9 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             <label>
               <h6>Course Id</h6>
             </label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('courseId').touched}"
-            formControlName="courseId" placeholder="Id"> 
+            formControlName="courseId" placeholder="Id">
             <div class="invalid-feedback">
               Course Id must to be typed !
             </div>
@@ -201,16 +207,16 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             </a>
             <div role="separator" class="divider"></div>
           </div> -->
-        </div>  
+        </div>
       </form>
     </div>
     <div class="modal-footer d-flex">
       <button class="btn btn-secondary" (click)="modalTemplate.hide()">
         Close
       </button>
-      <!-- <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid" (click)="saveChanges(modalTemplate)">
+      <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid" (click)="saveChanges(modalTemplate)">
         Save Changes
-      </button> -->
+      </button>
     </div>
   </div>
 </div>

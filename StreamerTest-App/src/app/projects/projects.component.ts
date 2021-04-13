@@ -1,9 +1,12 @@
+import { HttpClient } from '@angular/common/http';
+import { Identifiers } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { identity } from 'rxjs';
 import { Project } from '../_models/Project';
-import { ProjectService } from '../_services/Project.service';
+import { ProjectService } from '../_services/ProjectService.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-projects',
@@ -21,19 +24,19 @@ export class ProjectsComponent implements OnInit {
   imageMarg = 4;
   imageShow = false;
   registerForm: FormGroup;
-  projectSearch: FormGroup;
+  projectSearch !: number;
 
-
-  _searchFilterById: number = 4;
-  _searchFilterByCourseId: number;
+  _searchFilterById: number =1;
+  _searchFilterByCourseId: number =3;
 
   constructor(
      private projectService: ProjectService
     , private fb: FormBuilder
+    , private route: ActivatedRoute
   ) { }
 
   get searchFilterId(): number {
-  return this._searchFilterById;
+    return this._searchFilterById;
   }
   set searchFilterId(value: number){
     this._searchFilterById = value;
@@ -47,7 +50,7 @@ export class ProjectsComponent implements OnInit {
       this._searchFilterByCourseId = value;
       this.filteredProjects = this.searchFilterCourseId ? this.projectsFilterByCourseId(this.searchFilterCourseId) : this.projects;
     }
-  
+
   newProject(template: any) {
     this.openModal(template);
   }
@@ -59,35 +62,36 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit() {
     this.validation();
-    this.projectSearch = this.fb.group({ id: new FormControl });
-  }  
+
+    this.projects.forEach((p: Project) => {
+      if (p.id == this.route.snapshot.params.id) {
+        this.project = p;
+      }
+    });
+  }
 
   projectsFilterById(filter: number): Project[] {
     return this.projects.filter(
-        projects => projects.id == filter);
+        projects => projects.id === filter);
   }
-  
+
   projectsFilterByCourseId(filter: number): Project[] {
     return this.projects.filter(
-        projects => projects.courseId == filter);
-  } 
+        projects => projects.courseId === filter);
+  }
 
   showImages(){
     this.imageShow = !this.imageShow;
   }
 
-  // saveChanges(template: any) {
-  //   if (this.registerForm.valid) {
-  //     this.project = Object.assign({}, this.registerForm.value);
-  //     this.projectService.postCreate(this.project).subscribe(
-  //       (newProject: Project) => {
-  //         console.log(newProject);
-  //         template.hide();
-  //         this.getProject();
-  //       }, error => { console.log(error); }
-  //     );
-  //   }
-  // }
+  saveChanges(modalTemplate: Project) {
+    if (this.registerForm.valid) {
+      this.projectService.postCreate(modalTemplate).subscribe(
+        data => {
+          console.log(data);
+        });
+    }
+  }
 
   validation() {
     this.registerForm = this.fb.group({
@@ -100,25 +104,25 @@ export class ProjectsComponent implements OnInit {
       course: new FormControl,
       courseId: ['', Validators.required]
     });
-
-    
   }
 
-  getProjectById(_searchFilterById){
-    this.projectService.getById(_searchFilterById).subscribe(
-      data => {(this.project) = data;
+  getProjectById(id:number) {
+    this.projectService.getByCourseId(id).subscribe(
+      data => {(this.projects) = data;
+        this.filteredProjects = this.projects;
       console.log(data);
     }, error => {
         console.log(error);
     });
   }
 
-  getProjectByCourseId(projectSearch) {
-    this.projectService.getByCourseId(projectSearch).subscribe(
-      dataCourseId => {(this.projects) = dataCourseId;
-        console.log(dataCourseId);
-      }, error => {
-          console.log(error);
+  getProjectByCourseId(id: number) {
+    this.projectService.getByCourseId(id).subscribe(
+      data => {(this.projects) = data;
+        this.filteredProjects = this.projects;
+      console.log(data);
+    }, error => {
+        console.log(error);
     });
   }
 }
