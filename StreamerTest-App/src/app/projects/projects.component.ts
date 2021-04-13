@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { identity } from 'rxjs';
 import { Project } from '../_models/Project';
 import { ProjectService } from '../_services/Project.service';
 
@@ -20,8 +21,10 @@ export class ProjectsComponent implements OnInit {
   imageMarg = 4;
   imageShow = false;
   registerForm: FormGroup;
+  projectSearch: FormGroup;
 
-  _searchFilterById: number;
+
+  _searchFilterById: number = 4;
   _searchFilterByCourseId: number;
 
   constructor(
@@ -56,7 +59,7 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit() {
     this.validation();
-    this.getProject();
+    this.projectSearch = this.fb.group({ id: new FormControl });
   }  
 
   projectsFilterById(filter: number): Project[] {
@@ -73,18 +76,18 @@ export class ProjectsComponent implements OnInit {
     this.imageShow = !this.imageShow;
   }
 
-  saveChanges(template: any) {
-    if (this.registerForm.valid) {
-      this.project = Object.assign({}, this.registerForm.value);
-      this.projectService.postCreate(this.project).subscribe(
-        (newProject: Project) => {
-          console.log(newProject);
-          template.hide();
-          this.getProject();
-        }, error => { console.log(error); }
-      );
-    }
-  }
+  // saveChanges(template: any) {
+  //   if (this.registerForm.valid) {
+  //     this.project = Object.assign({}, this.registerForm.value);
+  //     this.projectService.postCreate(this.project).subscribe(
+  //       (newProject: Project) => {
+  //         console.log(newProject);
+  //         template.hide();
+  //         this.getProject();
+  //       }, error => { console.log(error); }
+  //     );
+  //   }
+  // }
 
   validation() {
     this.registerForm = this.fb.group({
@@ -97,16 +100,25 @@ export class ProjectsComponent implements OnInit {
       course: new FormControl,
       courseId: ['', Validators.required]
     });
+
+    
   }
 
-  getProject(){
-    this.projectService.getProject().subscribe(
-      (_projects: Project[]) => {
-      (this.projects) = _projects;
-      this.filteredProjects = this._searchFilterById;
-      console.log(this._searchFilterById);
+  getProjectById(_searchFilterById){
+    this.projectService.getById(_searchFilterById).subscribe(
+      data => {(this.project) = data;
+      console.log(data);
     }, error => {
-      console.log(error);
+        console.log(error);
+    });
+  }
+
+  getProjectByCourseId(projectSearch) {
+    this.projectService.getByCourseId(projectSearch).subscribe(
+      dataCourseId => {(this.projects) = dataCourseId;
+        console.log(dataCourseId);
+      }, error => {
+          console.log(error);
     });
   }
 }

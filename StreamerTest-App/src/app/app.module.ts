@@ -13,6 +13,7 @@ import { ProjectService } from '../app/_services/Project.service';
 import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ProjectsComponent } from './projects/projects.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [	
@@ -29,7 +30,8 @@ import { ProjectsComponent } from './projects/projects.component';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ],
   providers: [
     ProjectService
