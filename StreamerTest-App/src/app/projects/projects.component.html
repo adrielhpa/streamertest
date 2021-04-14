@@ -7,10 +7,10 @@
         </li>
         <input type="number"
         class="form-control-mr-2"
-        placeholder="search by project">
-        <!-- [(ngModel)]='projectSearchId'
-        formControlName="id"> -->
-        <button class="btn btn-outline-primary" (click)="getProjectById(_searchFilterById)"  >
+        placeholder="search by project"
+        [(ngModel)]='_searchFilterById'
+        value="searchFilterById">
+        <button class="btn btn-outline-primary" (click)="getProjectById(_searchFilterById)">
           Search
         </button>
 
@@ -21,75 +21,74 @@
 
         <input type="number"
         class="form-control-mr-2"
-        placeholder="search by course id">
-        <!-- [ngClass]="projectSearch.get('courseId')"
-        formControlName="courseId"> -->
-
-        <button class="btn btn-outline-primary" (click)="getProjectByCourseId(_searchFilterByCourseId)">
-          Search
+        placeholder="search by course id"
+        [(ngModel)]='_searchFilterByCourseId'
+        value="searchFilterCourseId">
+          <button class="btn btn-outline-primary" (click)="getProjectByCourseId(_searchFilterByCourseId)">
+            Search
+          </button>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-outline-primary" (click)="modalProject(modalTemplate)">
+          <i class="fa fa-plus-circle"></i> &nbsp;
+          New Project
         </button>
       </div>
     </div>
-    <div>
-      <button class="btn btn-outline-primary" (click)="newProject(modalTemplate)">
-        <i class="fa fa-plus-circle"></i> &nbsp;
-        New Project
+
+    <table class="table table-striped">
+      <thead class="thead-light">
+        <tr>
+          <th>
+            <button class="btn btn-outline-primary"
+            (click)="showImages()">
+            <i class="{{imageShow ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
+          </button>
+        </th>
+        <th>#</th>
+        <th>Name</th>
+        <th>Why</th>
+        <th>What</th>
+        <th>WhatWillWeDo</th>
+        <th>Project Status</th>
+        <th>Course Id</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody *ngIf=" _searchFilterByCourseId || _searchFilterById">
+      <tr *ngFor="let project of filteredProjects">
+        <td>
+          <img *ngIf="imageShow"
+          src="http://localhost:5000/img/{{project.image}}"
+          [style.width.px] ="imageLarg"
+          [style.margin.px]="imageMarg">
+        </td>
+        <td>{{project.id}}</td>
+        <td>{{project.name}}</td>
+        <td>
+          <div *ngIf="!project.why.length">
+            No information inputed !
+          </div>
+          <div *ngIf="project.why.length">
+            {{project.why}}
+          </div>
+        </td>
+        <td>{{project.whatWillWeDo}}</td>
+        <td>{{project.what}}</td>
+        <td>{{project.projectStatus}}</td>
+        <td>{{project.courseId}}</td>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-success"
+          tooltip="Edit" (click)="modalProject(modalTemplate)">
+          <i class="fa fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger"
+        tooltip="Delete" (click)="deleteProject(project.id)">
+        <i class="fa fa-eraser"></i>
       </button>
     </div>
-  </div>
-
-  <table class="table table-striped">
-    <thead class="thead-light">
-      <tr>
-        <th>
-          <button class="btn btn-outline-primary"
-          (click)="showImages()">
-          <i class="{{imageShow ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
-        </button>
-      </th>
-      <th>#</th>
-      <th>Name</th>
-      <th>Why</th>
-      <th>What</th>
-      <th>WhatWillWeDo</th>
-      <th>Project Status</th>
-      <th>Course Id</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody *ngIf="_searchFilterById && _searchFilterById.valueOf">
-    <tr *ngFor="let project of filteredProjects">
-      <td>
-        <img *ngIf="imageShow"
-        src="http://localhost:5000/img/{{project.image}}"
-        [style.width.px] ="imageLarg"
-        [style.margin.px]="imageMarg">
-      </td>
-      <td>{{project.id}}</td>
-      <td>{{project.name}}</td>
-      <td>
-        <div *ngIf="!project.why.length">
-          No information inputed !
-        </div>
-        <div *ngIf="project.why.length">
-          {{project.why}}
-        </div>
-      </td>
-      <td>{{project.whatWillWeDo}}</td>
-      <td>{{project.what}}</td>
-      <td>{{project.projectStatus}}</td>
-      <td>{{project.courseId}}</td>
-      <div class="btn-group">
-        <button class="btn btn-sm btn-success"
-        tooltip="Edit" (click)="openModal(modalTemplate)">
-        <i class="fa fa-edit"></i>
-      </button>
-      <button class="btn btn-sm btn-danger"
-      tooltip="Delete" (click)="openModal(modalTemplate)">
-      <i class="fa fa-eraser"></i>
-    </button>
-  </div>
-</tr>
+  </tr>
 </tbody>
 <tfoot>
   <tr *ngIf="!projects.length">
@@ -122,7 +121,9 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             </label>
             <input type="text" class="form-control"
             [ngClass]="{'is-invalid': registerForm.get('name').errors && registerForm.get('name').touched}"
-            formControlName="name" placeholder="Type the name of project">
+            formControlName="name"
+            id = "name"
+            placeholder="Type the name of project">
             <div class="invalid-feedback">
               Name must to be typed !
             </div>
@@ -134,7 +135,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
               <h6>Why</h6>
             </label>
             <input type="text" class="form-control"
-            formControlName="why" placeholder="Type why to do this project">
+            formControlName="why" id = "why" placeholder="Type why to do this project">
             <div class="text-danger">
               *Optional
             </div>
@@ -144,7 +145,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
               <h6>What</h6>
             </label>
             <input type="text" class="form-control"
-            formControlName="what" placeholder="Type what is this project">
+            formControlName="what" id = "what" placeholder="Type what is this project">
             <div class="text-danger">
               *Optional
             </div>
@@ -156,7 +157,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
               <h6>What Will We Do</h6>
             </label>
             <input type="text" class="form-control"
-            formControlName="whatWillWeDo" placeholder="Type what we will do in this project">
+            formControlName="whatWillWeDo" id = "whatWillWeDo" placeholder="Type what we will do in this project">
             <div class="text-danger">
               *Optional
             </div>
@@ -165,8 +166,8 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             <label>
               <h6>Project Status</h6>
             </label>
-            <input type="text" class="form-control"
-            formControlName="projectStatus" placeholder="project status">
+            <input type="nunmber" class="form-control"
+            formControlName="projectStatus" id = "projectStatus" placeholder="project status">
             <div class="text-danger">
               *Optional
             </div>
@@ -176,7 +177,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
               <h6>Image</h6>
             </label>
             <input type="text" class="form-control"
-            formControlName="image" placeholder="Image URL">
+            formControlName="image" id = "image" placeholder="Image URL">
             <div class="text-danger">
               *Optional
             </div>
@@ -187,26 +188,11 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             </label>
             <input type="text" class="form-control"
             [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('courseId').touched}"
-            formControlName="courseId" placeholder="Id">
+            formControlName="courseId" id = "courseId" placeholder="Id">
             <div class="invalid-feedback">
               Course Id must to be typed !
             </div>
           </div>
-          <!-- <li class="nav-item dropdown" dropdown>
-            <a dropdownToggle class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            Course
-          </a>
-          <div *dropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">
-              <tbody>
-                <td>
-                  {{project.courseId}}
-                </td>
-              </tbody>
-            </a>
-            <div role="separator" class="divider"></div>
-          </div> -->
         </div>
       </form>
     </div>

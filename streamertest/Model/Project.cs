@@ -6,7 +6,7 @@ namespace SS_API.Model
     [Table("Projects")]
     public class Project
     {
-        [Required(ErrorMessage = "The course is required.")]
+        // [Required(ErrorMessage = "The course is required.")]
         public virtual Course Course { get; set; }
 
         [Key]
