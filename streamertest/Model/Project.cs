@@ -6,8 +6,6 @@ namespace SS_API.Model
     [Table("Projects")]
     public class Project
     {
-        // [Required(ErrorMessage = "The course is required.")]
-        public virtual Course Course { get; set; }
 
         [Key]
         public int Id { get; set; }
@@ -26,6 +24,9 @@ namespace SS_API.Model
         public ProjectStatus ProjectStatus { get; set; }        
 
         [ForeignKey("Course")]
-        public int CourseId { get; set; }        
+        public int CourseId { get; set; }   
+             
+        // [Required(ErrorMessage = "The course is required.")]
+        public virtual Course Course { get; set; }
     }
 }

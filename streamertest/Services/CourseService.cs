@@ -1,4 +1,6 @@
-﻿using SS_API.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using SS_API.Data;
 using SS_API.Model;
 
 namespace SS_API.Services
@@ -12,6 +14,10 @@ namespace SS_API.Services
             _streamerContext = streamerContext;
         }
 
+        public List<Course> GetAll(){
+            var allCourses = _streamerContext.Courses.ToList();
+            return allCourses;
+        }
 
         public Course GetById(int id)
         {

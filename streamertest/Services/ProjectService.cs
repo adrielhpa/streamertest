@@ -14,6 +14,11 @@ namespace SS_API.Services
             _streamerContext = streamerContext;
         }
 
+        //GET ALL PROJECTS
+        public List<Project> GetAll()
+        {
+            return _streamerContext.Projects.ToList();
+        }
         public Project GetById(int id)
         {
             var project = _streamerContext.Projects.Find(id);

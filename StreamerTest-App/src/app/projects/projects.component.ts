@@ -2,9 +2,11 @@ import { ProjectStatus } from './../_models/ProjectStatus.enum';
 import { Project } from './../_models/Project';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ProjectService } from '../_services/ProjectService.service';
 import { ActivatedRoute } from '@angular/router';
+import { resetFakeAsyncZone } from '@angular/core/testing';
 import { Course } from '../_models/Course';
+import { ProjectService } from '../_services/_projectServices/ProjectService.service';
+import { CourseService } from '../_services/_courseService/_courseService.service';
 
 @Component({
   selector: 'app-projects',
@@ -16,19 +18,25 @@ export class ProjectsComponent implements OnInit {
   filteredProjects: any = [];
   projects: Project[] = [];
 
-  project: Project;
+  proj: Project;
+
+  courses: Course[] = [];
+  projectStatus: ProjectStatus[] = [];
+  pro: ProjectStatus;
 
   imageLarg = 70;
   imageMarg = 4;
   imageShow = false;
   registerForm: FormGroup;
-  projectSearch : Project[] = [];
+
+
 
   _searchFilterById: number;
   _searchFilterByCourseId: number;
 
   constructor(
     private projectService: ProjectService
+    , private courseService: CourseService
     , private fb: FormBuilder
     , private route: ActivatedRoute
   ) { }
@@ -49,6 +57,17 @@ export class ProjectsComponent implements OnInit {
     this.filteredProjects = this.searchFilterCourseId ? this.projectsFilterByCourseId(this.searchFilterCourseId) : this.projects;
   }
 
+  ngOnInit() {
+    this.getAllCourses();
+    this.validation();
+
+    this.projects.forEach((p: Project) => {
+      if (p.id == this.route.snapshot.params.id) {
+        this.proj = p;
+      }
+    });
+  }
+
   modalProject(template: any) {
     this.openModal(template);
   }
@@ -57,17 +76,10 @@ export class ProjectsComponent implements OnInit {
 
     modalTemplate.show();
   }
-
-  ngOnInit() {
-
-    this.validation();
-
-    this.projects.forEach((p: Project) => {
-      if (p.id == this.route.snapshot.params.id) {
-        this.project = p;
-      }
-    });
+  hideModal(modalTemplate: any) {
+    modalTemplate.hide();
   }
+
 
   projectsFilterById(filter: number): Project[] {
     return this.projects.filter(
@@ -99,7 +111,7 @@ export class ProjectsComponent implements OnInit {
 
   getProjectById(id:number) {
     this.projectService.getById(id).subscribe(
-      data => {(this.project) = data;
+      data => {(this.proj) = data;
                this.filteredProjects = this.projects;
                console.log(data);
     }, error => {
@@ -117,90 +129,43 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
+  getAllCourses() {
+    this.courseService.getAllCourses().subscribe(data => {
+      this.courses = data;
+      console.log(data)
+    });
+  }
+
   updateProject(up: Project) {
 
-    this.openModal(up);
+    up.name = this.registerForm.get('name').value;
+    up.image = this.registerForm.get('image').value;
+    up.why = this.registerForm.get('why').value;
+    up.what = this.registerForm.get('what').value;
+    up.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
+    up.courseId = this.registerForm.get('courseId').value;
 
-    const input = [(<HTMLInputElement>document.getElementById("name")).value,
-    (<HTMLInputElement>document.getElementById("why")).value,
-    (<HTMLInputElement>document.getElementById("image")).value,
-    (<HTMLInputElement>document.getElementById("what")).value,
-    (<HTMLInputElement>document.getElementById("whatWillWeDo")).value,
-    (<HTMLInputElement>document.getElementById("projectStatus")).value,
-      (<HTMLInputElement>document.getElementById("courseId")).value];
+    this.projectService.Update(up).subscribe(data => console.log(data));
 
-  //   this.registerForm.setValue({'name': 'up.name' ,'why': input[1], "image": input[2],
-  //   'what': input[3], 'whatWillWeDo': input[4], "projectStatus": input[5], "courseId": parseInt(input[6]), "course": ''
-  // });
-
-    var pro = new Project();
-    pro.name = input[0];
-    pro.why = input[1];
-    pro.image = input[2];
-    pro.what = input[3];
-    pro.whatWillWeDo = input[4];
-    pro.projectStatus = ProjectStatus[input[5]];
-    pro.courseId = parseInt(input[6], 10);
-
-    console.log(input);
-
-    this.projectService.Update(pro).subscribe(data => {console.log(data)});
+    this.hideModal(up);
   }
 
   saveChanges(modalTemplate: Project) {
 
-    const input = [(<HTMLInputElement>document.getElementById("name")).value,
-    (<HTMLInputElement>document.getElementById("why")).value,
-    (<HTMLInputElement>document.getElementById("image")).value,
-    (<HTMLInputElement>document.getElementById("what")).value,
-    (<HTMLInputElement>document.getElementById("whatWillWeDo")).value,
-    (<HTMLInputElement>document.getElementById("projectStatus")).value,
-    (<HTMLInputElement>document.getElementById("courseId")).value];
-
     var pro = new Project();
-    pro.name = input[0];
-    pro.why = input[1];
-    pro.image = input[2];
-    pro.what = input[3];
-    pro.whatWillWeDo = input[4];
-    pro.projectStatus = ProjectStatus[input[5]];
-    pro.courseId = parseInt(input[6], 10);
+    pro.name = this.registerForm.get('name').value;
+    pro.image = this.registerForm.get('image').value;
+    pro.why = this.registerForm.get('why').value;
+    pro.what = this.registerForm.get('what').value;
+    pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
+    pro.courseId = this.registerForm.get('courseId').value;
 
+    this.projectService.Create(pro).subscribe(data => console.log(data));
 
-    this.projectService.Create(pro).subscribe(data => { console.log(data)});
-
-    console.log(input);
-
-    }
+    this.hideModal(modalTemplate);
+  }
 
   deleteProject(project) {
-    console.log(project);
-
-    const input = [(<HTMLInputElement>document.getElementById("id")).value,
-      (<HTMLInputElement>document.getElementById("name")).value,
-    (<HTMLInputElement>document.getElementById("why")).value,
-    (<HTMLInputElement>document.getElementById("image")).value,
-    (<HTMLInputElement>document.getElementById("what")).value,
-    (<HTMLInputElement>document.getElementById("whatWillWeDo")).value,
-    (<HTMLInputElement>document.getElementById("projectStatus")).value,
-          (<HTMLInputElement>document.getElementById("courseId")).value
-    ];
-
-      this.registerForm.setValue({'name': 'up.name' ,'why': "", "image": "",
-    'what': "", 'whatWillWeDo': "", "projectStatus": "", "courseId": "", "course": "a"
-  });
-
-    this.project.name = input[0];
-    this.project.why = input[1];
-    this.project.image = input[2];
-    this.project.what = input[3];
-    this.project.whatWillWeDo = input[4];
-    this.project.projectStatus = ProjectStatus[input[5]];
-    this.project.courseId = parseInt(input[6]);
-
-    console.log(project);
-
-    this.projectService.Delete(project).subscribe(res => console.log(res));
 
   }
 }

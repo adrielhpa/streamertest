@@ -74,6 +74,7 @@ namespace SS_API
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseStaticFiles();
+            
             app.UseMvc();
 
             // Ativando middlewares para uso do Swagger

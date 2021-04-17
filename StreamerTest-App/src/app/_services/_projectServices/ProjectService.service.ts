@@ -1,9 +1,8 @@
-import { ProjectsComponent } from './../projects/projects.component';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Course } from '../_models/Course';
-import { Project } from '../_models/Project';
+import { Course } from 'src/app/_models/Course';
+import { Project } from 'src/app/_models/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,7 @@ export class ProjectService {
   }
 
   Create(pro): Observable<any> {
-    return this.http.post(this.baseUrl, pro);
+    return this.http.post(`${this.baseUrl}`, pro);
   }
 
   Update(pro: Project) {

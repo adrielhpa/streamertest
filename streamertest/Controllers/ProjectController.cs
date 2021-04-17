@@ -17,7 +17,14 @@ namespace SS_API.Controllers
             _courseService = courseService;
             _projectService = projectService;
         }
-        
+
+        //GET All Courses
+        [HttpGet]
+        public List<Course> GetAllCourses()
+        {
+            return _courseService.GetAll();
+        }
+
         //GETById: api/project/5
         [HttpGet("{Id}")]
         public Project GetById(int id)
@@ -36,7 +43,7 @@ namespace SS_API.Controllers
         //UPDATE
         [HttpPut]
         public bool Update(Project project)
-        {            
+        {
             return _projectService.Update(project);
         }
 
@@ -44,7 +51,7 @@ namespace SS_API.Controllers
         [HttpDelete("{id}")]
         public bool Delete(int id)
         {
-            return _projectService.Delete(id);            
+            return _projectService.Delete(id);
         }
 
         //CREATE A COURSE/PROJECT
