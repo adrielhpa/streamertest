@@ -13,6 +13,7 @@ import { ProjectService } from './_services/_projectServices/ProjectService.serv
 import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { RouterModule } from '@angular/router';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -26,12 +27,18 @@ import { RouterModule } from '@angular/router';
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
+    ToastrModule.forRoot({
+      timeOut: 2000,
+      progressBar: true,
+      progressAnimation: 'increasing',
+      preventDuplicates: true
+    }),
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [
     ProjectService

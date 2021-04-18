@@ -4,29 +4,22 @@
         <label class="mr-2"><b>Project Id:</b></label>
         <input type="number"
         class="form-control-mr-2"
-        placeholder="search by project"
-        [(ngModel)]='_searchFilterById'
-        value="searchFilterById">
-        <button class="btn btn-outline-primary" (click)="getProjectById(_searchFilterById)">
-          Search
-        </button>
+        placeholder="search by project id"
+        [(ngModel)]='projectFilterById'
+        value="projectFilterById">
         &nbsp;
       </div>
       <div class="form-group mb-2">
         <label class="mr-2"><b>Course Id:</b></label>
-
         <input type="number"
         class="form-control-mr-2"
         placeholder="search by course id"
-        [(ngModel)]='_searchFilterByCourseId'
-        value="searchFilterCourseId">
-        <button class="btn btn-outline-primary" (click)="getProjectByCourseId(_searchFilterByCourseId)">
-          Search
-        </button>
+        [(ngModel)]='projectFilterByCourseId'
+        value="projectFilterByCourseId">
       </div>
     </div>
     <div>
-      <button class="btn btn-outline-primary" (click)="modalProject(modalTemplate)">
+      <button class="btn btn-outline-primary" (click)="newProject(modalTemplate)">
         <i class="fa fa-plus-circle"></i> &nbsp;
         New Project
       </button>
@@ -52,7 +45,7 @@
       <th></th>
     </tr>
   </thead>
-  <tbody *ngIf="projects">
+  <tbody *ngIf="projects && projects.length">
     <tr *ngFor="let project of filteredProjects">
       <td>
         <img *ngIf="imageShow"
@@ -90,16 +83,16 @@
       <td>{{project.courseId}}</td>
       <div class="btn-group">
         <button class="btn btn-sm btn-success"
-        tooltip="Edit" (click)="modalProject(modalTemplate)">
+        tooltip="Edit" (click)="updateProject(project, modalTemplate)">
         <i class="fa fa-edit"></i>
-      </button>
-      <button class="btn btn-sm btn-danger"
-      tooltip="Delete" (click)="deleteProject(project.id)">
-      <i class="fa fa-eraser"></i>
-    </button>
-  </div>
-</tr>
-</tbody>
+        </button>
+        <button class="btn btn-sm btn-danger"
+        tooltip="Delete" (click)="deleteProject(project, confirm)">
+        <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+    </tr>
+  </tbody>
 <tfoot>
   <tr *ngIf="!projects.length">
     <td colspan="7" class="text-center">
@@ -177,47 +170,73 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
             </label>
             <select class="form-control"
             formControlName="projectStatus" placeholder="project status">
-              <option>0- In Progress</option>
-              <option>1- Published</option>
+            <option>0- In Progress</option>
+            <option>1- Published</option>
           </select>
-            <div class="text-danger">
-              *Optional
-            </div>
-          </div>
-          <div class="form-group col-md-7">
-            <label>
-              <h6>Image</h6>
-            </label>
-            <input type="text" class="form-control"
-            formControlName="image" placeholder="Image URL">
-            <div class="text-danger">
-              *Optional
-            </div>
-          </div>
-          <div class="form-group col-md-4">
-            <label>
-              <h6>Course</h6>
-            </label>
-            <select class="form-control"
-            [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('courseId').touched}"
-            formControlName="courseId" placeholder="Course">
-            <option *ngFor="let course of courses">{{course.id}}- {{course.name}}</option>
-          </select>
-            <div class="invalid-feedback">
-              Course Id must to be typed !
-            </div>
+          <div class="text-danger">
+            *Optional
           </div>
         </div>
-      </form>
+        <div class="form-group col-md-7">
+          <label>
+            <h6>Image</h6>
+          </label>
+          <input type="text" class="form-control"
+          formControlName="image" placeholder="Image URL">
+          <div class="text-danger">
+            *Optional
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label>
+            <h6>Course</h6>
+          </label>
+          <select class="form-control"
+          [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('name').errors && registerForm.get('courseId').touched}"
+          formControlName="courseId" placeholder="Course">
+          <option *ngFor="let course of courses">{{course.id}}</option>
+        </select>
+        <div class="invalid-feedback">
+          Course Id must to be choiced !
+        </div>
+      </div>
     </div>
-    <div class="modal-footer d-flex">
-      <button class="btn btn-secondary" (click)="modalTemplate.hide()">
-        Close
-      </button>
-      <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid" (click)="saveChanges(modalTemplate)">
-        Save Changes
-      </button>
+  </form>
+</div>
+<div class="modal-footer d-flex">
+  <button class="btn btn-secondary" (click)="modalTemplate.hide()">
+    Close
+  </button>
+  <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid" (click)="saveChanges(modalTemplate)">
+    Save Changes
+  </button>
+</div>
+</div>
+</div>
+</div>
+
+<div bsModal #confirm="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          Deleting project
+        </h4>
+        <button type="button" class="close pull-right" (click)="confirm.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{excludeProject}}</p>
+      </div>
+      <div class="modal-footer btn-group d-flex">
+        <button type="button" class="btn btn-outline-primary" (click)="confirm.hide()">
+          NO SURE, CANCEL
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="confirmDelete(confirm)">
+          YES! DELETE
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </div>

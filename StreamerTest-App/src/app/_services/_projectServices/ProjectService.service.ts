@@ -13,23 +13,27 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
-  getById(id: number): Observable<Project> {
-    return this.http.get<Project>(`${this.baseUrl}/` + id);
+  getAllProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}/all`);
+  }
+
+  getById(id: number): Observable<Project[]>{
+    return this.http.get<Project[]>(`${this.baseUrl}/${id}`);
   }
 
   getByCourseId(cId: number): Observable<Project[]>{
     return this.http.get<Project[]>(`${this.baseUrl}/course/${cId}`);
   }
 
-  Create(pro): Observable<any> {
+  Create(pro: Project): Observable<any>{
     return this.http.post(`${this.baseUrl}`, pro);
   }
 
   Update(pro: Project) {
-    return this.http.put(`${this.baseUrl}`, pro);
+    return this.http.put(`${this.baseUrl}/${pro.id}`, pro);
   }
 
-  Delete(id: any) {
-    return this.http.delete(`${this.baseUrl}/` + id);
+  Delete(id: number) {
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 }

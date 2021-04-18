@@ -1,65 +1,65 @@
-import { ProjectStatus } from './../_models/ProjectStatus.enum';
 import { Project } from './../_models/Project';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 import { Course } from '../_models/Course';
 import { ProjectService } from '../_services/_projectServices/ProjectService.service';
 import { CourseService } from '../_services/_courseService/_courseService.service';
+import { ToastrService } from 'ngx-toastr';
+import { templateJitUrl } from '@angular/compiler';
 
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
-  styleUrls: ['./projects.component.css']
+  styleUrls: ['./projects.component.css'],
 })
 export class ProjectsComponent implements OnInit {
 
   filteredProjects: any = [];
   projects: Project[] = [];
+  courses: Course[] = [];
 
   proj: Project;
-
-  courses: Course[] = [];
-  projectStatus: ProjectStatus[] = [];
-  pro: ProjectStatus;
 
   imageLarg = 70;
   imageMarg = 4;
   imageShow = false;
   registerForm: FormGroup;
+  excludeProject = '';
 
+  modoSave = '';
 
-
-  _searchFilterById: number;
-  _searchFilterByCourseId: number;
+  _projectFilterById: number;
+  _projectFilterByCourseId: number;
 
   constructor(
     private projectService: ProjectService
     , private courseService: CourseService
     , private fb: FormBuilder
     , private route: ActivatedRoute
+    , private toast: ToastrService
   ) { }
 
-  get searchFilterId(): number {
-    return this._searchFilterById;
+  get projectFilterById(): number {
+    return this._projectFilterById;
   }
-  set searchFilterId(value: number){
-    this._searchFilterById = value;
-    this.filteredProjects = this.searchFilterId ? this.projectsFilterById(this.searchFilterId) : this.projects;
+  set projectFilterById(value: number){
+    this._projectFilterById = value;
+    this.filteredProjects = this.projectFilterById ? this.projectsFilterById(this.projectFilterById) : this.projects;
   }
 
-  get searchFilterCourseId(): number {
-    return this._searchFilterByCourseId;
+  get projectFilterByCourseId(): number {
+    return this._projectFilterByCourseId;
   }
-  set searchFilterCourseId(value: number){
-    this._searchFilterByCourseId = value;
-    this.filteredProjects = this.searchFilterCourseId ? this.projectsFilterByCourseId(this.searchFilterCourseId) : this.projects;
+  set projectFilterByCourseId(value: number){
+    this._projectFilterByCourseId = value;
+    this.filteredProjects = this.projectFilterByCourseId ? this.projectsFilterByCourseId(this.projectFilterByCourseId) : this.projects;
   }
 
   ngOnInit() {
     this.getAllCourses();
     this.validation();
+    this.getAllProjects();
 
     this.projects.forEach((p: Project) => {
       if (p.id == this.route.snapshot.params.id) {
@@ -73,7 +73,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   openModal(modalTemplate: any) {
-
+    this.registerForm.reset();
     modalTemplate.show();
   }
   hideModal(modalTemplate: any) {
@@ -81,9 +81,9 @@ export class ProjectsComponent implements OnInit {
   }
 
 
-  projectsFilterById(filter: number): Project[] {
+  projectsFilterById(filter: number): any {
     return this.projects.filter(
-      projects => projects.id === filter);
+      proj => proj.id === filter);
   }
 
   projectsFilterByCourseId(filter: number): Project[] {
@@ -111,8 +111,7 @@ export class ProjectsComponent implements OnInit {
 
   getProjectById(id:number) {
     this.projectService.getById(id).subscribe(
-      data => {(this.proj) = data;
-               this.filteredProjects = this.projects;
+      data => {(this.projects) = data;
                console.log(data);
     }, error => {
       console.log(error);
@@ -122,7 +121,6 @@ export class ProjectsComponent implements OnInit {
   getProjectByCourseId(id: number) {
     this.projectService.getByCourseId(id).subscribe(
       data => {(this.projects) = data;
-               this.filteredProjects = this.projects;
                console.log(data);
     }, error => {
       console.log(error);
@@ -132,40 +130,84 @@ export class ProjectsComponent implements OnInit {
   getAllCourses() {
     this.courseService.getAllCourses().subscribe(data => {
       this.courses = data;
-      console.log(data)
+      console.log(data);
     });
   }
 
-  updateProject(up: Project) {
-
-    up.name = this.registerForm.get('name').value;
-    up.image = this.registerForm.get('image').value;
-    up.why = this.registerForm.get('why').value;
-    up.what = this.registerForm.get('what').value;
-    up.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
-    up.courseId = this.registerForm.get('courseId').value;
-
-    this.projectService.Update(up).subscribe(data => console.log(data));
-
-    this.hideModal(up);
+  getAllProjects() {
+    this.projectService.getAllProjects().subscribe(data => {
+      this.projects = data;
+      this.filteredProjects = this.projects;
+      console.log(data);
+    });
   }
 
-  saveChanges(modalTemplate: Project) {
-
-    var pro = new Project();
-    pro.name = this.registerForm.get('name').value;
-    pro.image = this.registerForm.get('image').value;
-    pro.why = this.registerForm.get('why').value;
-    pro.what = this.registerForm.get('what').value;
-    pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
-    pro.courseId = this.registerForm.get('courseId').value;
-
-    this.projectService.Create(pro).subscribe(data => console.log(data));
-
-    this.hideModal(modalTemplate);
+  newProject(template: any) {
+    this.modoSave = 'post';
+    this.openModal(template);
+    this.saveChanges(template);
   }
 
-  deleteProject(project) {
 
+  updateProject(project: Project, template: any) {
+    this.modoSave = 'put';
+    this.openModal(template);
+    this.proj = project;
+    this.registerForm.patchValue(project);
+  }
+
+  deleteProject(proj: Project, template) {
+    template.show();
+    this.proj = proj;
+    this.excludeProject = `Are you sure to delete this project: ${proj.name}, Id: ${proj.id} ?`;
+  }
+
+  confirmDelete(template: any) {
+    this.projectService.Delete(this.proj.id).subscribe(
+      () => {
+        template.hide();
+        this.getAllProjects();
+      }, error => {
+        console.log(error);
+      }
+    );
+    this.toast.success('Done successfully', 'Success!');
+  }
+
+  saveChanges(modalTemplate: any) {
+
+    if (this.registerForm.valid) {
+      if (this.modoSave === 'post') {
+
+        var pro = new Project();
+        pro.name = this.registerForm.get('name').value;
+        pro.image = this.registerForm.get('image').value;
+        pro.why = this.registerForm.get('why').value;
+        pro.what = this.registerForm.get('what').value;
+        pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
+        pro.courseId = this.registerForm.get('courseId').value;
+
+        this.projectService.Create(pro).subscribe(data => { console.log(data) });
+        modalTemplate.hide();
+        this.toast.success('Done successfully', 'Success!');
+        this.getAllProjects();
+      }
+      else {
+        this.proj = Object.assign({id: this.proj.id}, this.registerForm.value)
+
+        var pro = new Project();
+        pro.name = this.registerForm.get('name').value;
+        pro.image = this.registerForm.get('image').value;
+        pro.why = this.registerForm.get('why').value;
+        pro.what = this.registerForm.get('what').value;
+        pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
+        pro.courseId = this.registerForm.get('courseId').value;
+        this.projectService.Update(pro).subscribe(data => {console.log(data);});
+
+        modalTemplate.hide();
+        this.getAllProjects();
+        this.toast.success('Done successfully', 'Success!');
+      }
+    }
   }
 }

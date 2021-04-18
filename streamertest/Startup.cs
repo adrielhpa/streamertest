@@ -72,9 +72,8 @@ namespace SS_API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowCredentials().AllowAnyOrigin());
             app.UseStaticFiles();
-            
             app.UseMvc();
 
             // Ativando middlewares para uso do Swagger

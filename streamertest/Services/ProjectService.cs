@@ -15,10 +15,12 @@ namespace SS_API.Services
         }
 
         //GET ALL PROJECTS
-        public List<Project> GetAll()
+        public List<Project> GetAllProjects()
         {
-            return _streamerContext.Projects.ToList();
+            var allProjects =_streamerContext.Projects.ToList();
+            return allProjects;
         }
+
         public Project GetById(int id)
         {
             var project = _streamerContext.Projects.Find(id);

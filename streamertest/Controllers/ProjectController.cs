@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using SS_API.Model;
 using SS_API.Services;
 using System.Collections.Generic;
@@ -16,6 +17,13 @@ namespace SS_API.Controllers
         {
             _courseService = courseService;
             _projectService = projectService;
+        }
+
+        //GET ALL PROJECTS
+        [HttpGet("all")]
+        public List<Project> GetAllProjects()
+        {
+            return _projectService.GetAllProjects();
         }
 
         //GET All Courses
