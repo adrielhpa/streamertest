@@ -7,6 +7,7 @@ import { ProjectService } from '../_services/_projectServices/ProjectService.ser
 import { CourseService } from '../_services/_courseService/_courseService.service';
 import { ToastrService } from 'ngx-toastr';
 import { templateJitUrl } from '@angular/compiler';
+import { ProjectStatus } from '../_models/ProjectStatus.enum';
 
 @Component({
   selector: 'app-projects',
@@ -148,10 +149,11 @@ export class ProjectsComponent implements OnInit {
     this.saveChanges(template);
   }
 
-
   updateProject(project: Project, template: any) {
     this.modoSave = 'put';
+
     this.openModal(template);
+
     this.proj = project;
     this.registerForm.patchValue(project);
   }
@@ -188,25 +190,17 @@ export class ProjectsComponent implements OnInit {
         pro.courseId = this.registerForm.get('courseId').value;
 
         this.projectService.Create(pro).subscribe(data => { console.log(data) });
-        modalTemplate.hide();
         this.toast.success('Done successfully', 'Success!');
+        modalTemplate.hide();
         this.getAllProjects();
       }
       else {
-        this.proj = Object.assign({id: this.proj.id}, this.registerForm.value)
+        this.proj = Object.assign({ id: this.proj.id }, this.registerForm.value);
+        this.projectService.Update(this.proj).subscribe(data => {console.log(data);});
 
-        var pro = new Project();
-        pro.name = this.registerForm.get('name').value;
-        pro.image = this.registerForm.get('image').value;
-        pro.why = this.registerForm.get('why').value;
-        pro.what = this.registerForm.get('what').value;
-        pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
-        pro.courseId = this.registerForm.get('courseId').value;
-        this.projectService.Update(pro).subscribe(data => {console.log(data);});
-
+        this.toast.success('Done successfully', 'Success!');
         modalTemplate.hide();
         this.getAllProjects();
-        this.toast.success('Done successfully', 'Success!');
       }
     }
   }

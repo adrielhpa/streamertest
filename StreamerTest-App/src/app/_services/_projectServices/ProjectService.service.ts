@@ -30,7 +30,7 @@ export class ProjectService {
   }
 
   Update(pro: Project) {
-    return this.http.put(`${this.baseUrl}/${pro.id}`, pro);
+    return this.http.put(this.baseUrl, pro);
   }
 
   Delete(id: number) {

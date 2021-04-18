@@ -62,6 +62,7 @@ namespace SS_API
 
             services.AddScoped<CourseService>();
             services.AddScoped<ProjectService>();
+
         }
 
         public void Configure(
@@ -72,7 +73,7 @@ namespace SS_API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowCredentials().AllowAnyOrigin());
+            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowCredentials().AllowAnyOrigin().WithOrigins("http://localhost:4200", "http://localhost:5000"));
             app.UseStaticFiles();
             app.UseMvc();
 
