@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { AppRoutingModule, routingComponets } from './app-routing.module';
+import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -19,8 +19,8 @@ import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
-      NavigationComponent,
-      routingComponets
+    NavigationComponent,
+    routingComponents
    ],
   imports: [
     BrowserModule,
@@ -38,7 +38,7 @@ import { ToastrModule } from 'ngx-toastr';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule
   ],
   providers: [
     ProjectService

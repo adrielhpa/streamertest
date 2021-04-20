@@ -1,5 +1,5 @@
 export enum ProjectStatus {
 
-    underDevelopment = 0,
-    published = 1
+    'Under Development' = 0,
+    'Published' = 1
 }

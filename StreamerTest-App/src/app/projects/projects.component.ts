@@ -1,12 +1,11 @@
 import { Project } from './../_models/Project';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Course } from '../_models/Course';
 import { ProjectService } from '../_services/_projectServices/ProjectService.service';
 import { CourseService } from '../_services/_courseService/_courseService.service';
 import { ToastrService } from 'ngx-toastr';
-import { templateJitUrl } from '@angular/compiler';
 import { ProjectStatus } from '../_models/ProjectStatus.enum';
 
 @Component({
@@ -21,6 +20,9 @@ export class ProjectsComponent implements OnInit {
   courses: Course[] = [];
 
   proj: Project;
+
+  projectStatus = ProjectStatus;
+  keys = [];
 
   imageLarg = 70;
   imageMarg = 4;
@@ -39,7 +41,9 @@ export class ProjectsComponent implements OnInit {
     , private fb: FormBuilder
     , private route: ActivatedRoute
     , private toast: ToastrService
-  ) { }
+  ) {
+    this.keys = Object.keys(this.projectStatus);
+   }
 
   get projectFilterById(): number {
     return this._projectFilterById;
@@ -147,6 +151,7 @@ export class ProjectsComponent implements OnInit {
     this.modoSave = 'post';
     this.openModal(template);
     this.saveChanges(template);
+    this.getAllProjects();
   }
 
   updateProject(project: Project, template: any) {
@@ -156,6 +161,7 @@ export class ProjectsComponent implements OnInit {
 
     this.proj = project;
     this.registerForm.patchValue(project);
+    this.getAllProjects();
   }
 
   deleteProject(proj: Project, template) {
@@ -200,6 +206,7 @@ export class ProjectsComponent implements OnInit {
 
         this.toast.success('Done successfully', 'Success!');
         modalTemplate.hide();
+        
         this.getAllProjects();
       }
     }
