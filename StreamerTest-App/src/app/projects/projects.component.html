@@ -196,7 +196,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
           <h6>Course</h6>
         </label>
         <select class="form-control"
-        [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('name').errors && registerForm.get('courseId').touched}"
+        [ngClass]="{'is-invalid': registerForm.get('courseId').errors && registerForm.get('courseId').touched}"
         formControlName="courseId" placeholder="Course">
         <option *ngFor="let course of courses">{{course.id}}</option>
       </select>

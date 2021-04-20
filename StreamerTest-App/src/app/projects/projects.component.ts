@@ -194,6 +194,7 @@ export class ProjectsComponent implements OnInit {
         pro.what = this.registerForm.get('what').value;
         pro.whatWillWeDo = this.registerForm.get('whatWillWeDo').value;
         pro.courseId = this.registerForm.get('courseId').value;
+        pro.course.name = this.registerForm.get('course.name').value;
 
         this.projectService.Create(pro).subscribe(data => { console.log(data) });
         this.toast.success('Done successfully', 'Success!');
@@ -206,7 +207,7 @@ export class ProjectsComponent implements OnInit {
 
         this.toast.success('Done successfully', 'Success!');
         modalTemplate.hide();
-        
+
         this.getAllProjects();
       }
     }
